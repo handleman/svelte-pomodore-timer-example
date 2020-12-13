@@ -10,6 +10,8 @@
         background-color: crimson;
         box-shadow: 3px 3px 18px -6px rgba(0,0,0,0.75);
         display: flex;
+        align-items: center;
+        justify-content: center;
         .clock{
             text-align: center;
             font-size: 40pt;
