@@ -1,3 +1,7 @@
+<script>
+	import {interval, rest} from '../helpers/stores.js' 
+</script>
+
 <svelte:head>
 	<title>configure timer</title>
 </svelte:head>
@@ -38,11 +42,7 @@
 	}
 </style>
 
-<script>
 
-	let interval = 25;
-	let rest = 5
-</script>
 
 <form class="config-panel">
 	<h2>Please adjust timer and rest intervals </h2>
@@ -50,10 +50,10 @@
 	<label for="interval">
 		Timer:
 	</label>
-	<input type="number" name="interval" id="interval" bind:value={interval}>
+	<input type="number" name="interval" id="interval" bind:value={$interval}>
 	<label for="rest">
 		Rest:
 	</label>
-	<input type="number" name="rest" id="rest" bind:value={rest}>
+	<input type="number" name="rest" id="rest" bind:value={$rest}>
 
 </form>
