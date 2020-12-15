@@ -8,9 +8,9 @@ export let accent = false
     @import '../styles/colors.scss';
     button {
         display: block;
-        border: 2px solid $buttonColor;
+        border: 2px solid $averageColor;
         background-color: white;
-        color: $buttonColor;
+        color: $averageColor;
         font-size: 1em;
         font-weight: bold;
         padding: .5em 1em;
@@ -19,13 +19,13 @@ export let accent = false
         box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
         cursor: pointer;
         &:hover{
-            border-color: lighten($buttonColor, 10%);
-            color: lighten($buttonColor, 10%);
+            border-color: lighten($averageColor, 10%);
+            color: lighten($averageColor, 10%);
 
         }
         &:active{
-            border-color: lighten($buttonColor, 5%);
-            color: lighten($buttonColor, 5%);
+            border-color: lighten($averageColor, 5%);
+            color: lighten($averageColor, 5%);
             box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
 
         }
