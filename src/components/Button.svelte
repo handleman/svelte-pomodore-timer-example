@@ -60,6 +60,6 @@ export let accent = false
     }
 </style>
 
-<button type="button"  class:primary class:accent>
+<button type="button"  class:primary class:accent on:click>
     <slot></slot>
 </button>
