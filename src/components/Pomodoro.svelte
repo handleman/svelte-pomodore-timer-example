@@ -3,10 +3,11 @@
 </script>
 <style lang="scss">
     $side: 250px;
+    
     .pomodoro{
         width: $side;
         height: $side;
-        border-radius: 150px;
+        border-radius: 100%;
         background-color: crimson;
         box-shadow: 3px 3px 18px -6px rgba(0,0,0,0.75);
         display: flex;
