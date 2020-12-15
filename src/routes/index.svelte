@@ -1,4 +1,5 @@
 <script>
+	
 	import Pomodoro from '../components/Pomodoro.svelte'
 	import Button from '../components/Button.svelte'
 	import TimerControlsPanel from '../components/TimerControlsPanel.svelte'
@@ -19,7 +20,7 @@
 
 <div class="timer-panel">
 	<Pomodoro/>
-	<TimerControlsPanel>
+	<TimerControlsPanel >
 		<Button primary>Start</Button>
 		<Button >Pause</Button>
 		<Button accent>Reset</Button>

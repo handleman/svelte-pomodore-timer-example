@@ -1,5 +1,5 @@
 <script>
-
+    import {interval, rest, timer} from '../helpers/stores.js' 
 </script>
 <style lang="scss">
     $side: 250px;
@@ -25,6 +25,6 @@
 
 <div class="pomodoro">
     <div class="clock">
-        <span >25</span>:<span>00</span>
+        <span >{$interval}</span>:<span>{$rest}</span>
     </div>
 </div>
