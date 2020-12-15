@@ -1,5 +1,5 @@
 <script>
-import { type } from "os";
+
 export let primary = false
 export let accent = false
 
