@@ -5,9 +5,7 @@ export let accent = false
 
 </script>
 <style lang="scss">
-    $buttonColor: lightskyblue;
-    $primaryColor: green;
-    $accentColor: crimson;
+    @import '../styles/colors.scss';
     button {
         display: block;
         border: 2px solid $buttonColor;
