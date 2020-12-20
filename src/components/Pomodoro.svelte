@@ -8,6 +8,8 @@ import { onDestroy } from 'svelte';
     let minutes = $countDown.minutes;
     let seconds = $countDown.seconds;
 
+    let tickInterval = null;
+
     let countDownState = $countDown.state;
 
     $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE   || interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
@@ -27,6 +29,19 @@ import { onDestroy } from 'svelte';
 
     const startCountdown = ()=>{
         console.log('start timer');
+        const tickCallback = () =>{
+            if($countDown.seconds === 0){
+                $countDown.seconds = DELAY-1;
+                $countDown.minutes = $countDown.minutes-1;
+                return;
+            }
+            if($countDown.minutes === 0 && $countDown.seconds === 1){
+                resetCountdown();
+                return;
+            }
+            $countDown.seconds = $countDown.seconds-1;
+        }
+        tickInterval = setInterval(tickCallback,1000)
     };
     const stopCountdown = ()=>{
         console.log('stop timer');
@@ -40,6 +55,9 @@ import { onDestroy } from 'svelte';
             state.state = COUNTDOWN_STATE.RESET;
             return state;
         });
+        if(tickInterval){
+            clearInterval(tickInterval);
+        }
     };
 
     /**
@@ -74,13 +92,13 @@ import { onDestroy } from 'svelte';
      */
     const intervalUnSubscribe = interval.subscribe(value =>{
         console.log('interval', value);
-        if( countDownState !== COUNTDOWN_STATE.REST && minutes !== value){
+        if( countDownState !== COUNTDOWN_STATE.REST && $countDown.minutes !== value){
             resetCountdown();
         }
     })
     const restUnSubscribe = rest.subscribe(value =>{
         console.log('rest', value);
-        if( countDownState === COUNTDOWN_STATE.REST && minutes !== value){
+        if( countDownState === COUNTDOWN_STATE.REST && $countDown.minutes !== value){
             resetCountdown();
         }
     })
