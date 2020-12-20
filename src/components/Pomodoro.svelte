@@ -130,6 +130,6 @@ import { onDestroy } from 'svelte';
 
 <div class="pomodoro" class:active class:paused >
     <div class="clock">
-        <span >{minutes}</span>:<span>{seconds}</span>
+        <span >{ $countDown.minutes}</span>:<span>{ $countDown.seconds}</span>
     </div>
 </div>
