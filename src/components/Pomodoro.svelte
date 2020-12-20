@@ -32,7 +32,14 @@ import { onDestroy } from 'svelte';
         console.log('stop timer');
     };
      const resetCountdown = ()=>{
-        console.log('reset timer');
+        console.log('reset countdown');
+        countDown.update(oldState=>{
+            const state = oldState;
+            state.minutes = $interval;
+            state.seconds = 0;
+            state.state = COUNTDOWN_STATE.RESET;
+            return state;
+        });
     };
 
     /**
