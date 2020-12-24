@@ -16,7 +16,8 @@ const countDownDefault = {
     minutes: INTERVAL,
     seconds: 0,
     interval:INTERVAL,
-    rest:REST
+    rest:REST,
+    restMode: false
 }
 
 export const timer = writable(timerDefault);

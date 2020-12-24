@@ -12,7 +12,7 @@ import { onDestroy } from 'svelte';
     $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE 
     $: ready = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
     $: paused = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED;
-    $: resting = $countDown.state === COUNTDOWN_STATE.REST;
+    $: resting = $countDown.restMode;
 
     const interpolateTimerToCountdownState = (timer) =>{
         if (timer.active && !timer.paused){
@@ -54,14 +54,14 @@ import { onDestroy } from 'svelte';
     const toggleCountdown = ()=>{
         console.log('toggleCountdown');
         console.log('toggleCountdown');
-        if($countDown.state === COUNTDOWN_STATE.ACTIVE){
+        if(! $countDown.restMode){
             countDown.update((oldState)=>{
 
                 return {
                     ...oldState,
-                    state:COUNTDOWN_STATE.REST,
                     minutes: $rest,
-                    seconds:0
+                    seconds:0,
+                    restMode:true
                 }
 
             })
@@ -72,9 +72,9 @@ import { onDestroy } from 'svelte';
 
                 return {
                     ...oldState,
-                    state:COUNTDOWN_STATE.ACTIVE,
                     minutes: $interval,
-                    seconds:0
+                    seconds:0,
+                    restMode:false
                 }
 
             })
@@ -108,7 +108,6 @@ import { onDestroy } from 'svelte';
      */
     const timerUnSubscribe = timer.subscribe(value=>{
         const derivedState = interpolateTimerToCountdownState(value);
-        const isResting = $countDown.state === COUNTDOWN_STATE.REST;
         const shouldSkip = (derivedState !== COUNTDOWN_STATE.ACTIVE && derivedState === $countDown.state) 
         console.log(`derived state : ${ derivedState}`);
         console.log(`current state : ${ $countDown.state }`);
@@ -116,18 +115,15 @@ import { onDestroy } from 'svelte';
         if(shouldSkip){
             return;
         }
-        
+        $countDown.state = derivedState
         switch(derivedState){
             case COUNTDOWN_STATE.ACTIVE:
-                $countDown.state = isResting ? COUNTDOWN_STATE.REST: derivedState;
                 startCountdown();
                 break;
             case COUNTDOWN_STATE.PAUSED:
-                $countDown.state = derivedState;
                 stopCountdown();
                 break;
             case COUNTDOWN_STATE.RESET:
-                $countDown.state = derivedState;
                 resetCountdown();
                 break;
             default:
