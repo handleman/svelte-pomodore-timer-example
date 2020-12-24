@@ -5,14 +5,11 @@ import { onDestroy } from 'svelte';
     import {COUNTDOWN_STATE} from '../enums/countDownState';
     
     const DELAY = 60;
-    let minutes = $countDown.minutes;
-    let seconds = $countDown.seconds;
 
     let tickInterval = null;
 
-    let countDownState = $countDown.state;
-
-    $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE   || interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
+    $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE 
+    $: ready = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
     $: paused= interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED
 
     const interpolateTimerToCountdownState = (timer) =>{
@@ -45,6 +42,10 @@ import { onDestroy } from 'svelte';
     };
     const stopCountdown = ()=>{
         console.log('stop timer');
+        console.log('tickInterval', tickInterval);
+        
+        clearInterval(tickInterval);
+
     };
      const resetCountdown = ()=>{
         console.log('reset countdown');
@@ -64,41 +65,38 @@ import { onDestroy } from 'svelte';
      * watching for timer state and laucnhing appropriate actions
      */
     const timerUnSubscribe = timer.subscribe(value=>{
-        const derivedConuntDownState = interpolateTimerToCountdownState(value);
-        console.log(`derived state : ${ derivedConuntDownState }`);
-        console.log(`current state : ${ countDownState }`);
+        console.log(`derived state : ${ interpolateTimerToCountdownState(value) }`);
+        console.log(`current state : ${ $countDown.state }`);
         
-        if (derivedConuntDownState !== countDownState){
-            countDownState = derivedConuntDownState
-            switch(countDownState){
-                case COUNTDOWN_STATE.ACTIVE:
-                    startCountdown();
-                    break;
-                case COUNTDOWN_STATE.PAUSED:
-                    stopCountdown();
-                    break;
-                case COUNTDOWN_STATE.RESET:
-                    resetCountdown();
-                    break;
-                default:
-                    console.log('state wasnt changed');
-            }
-            
+        $countDown.state = interpolateTimerToCountdownState(value);
+        switch($countDown.state){
+            case COUNTDOWN_STATE.ACTIVE:
+                startCountdown();
+                break;
+            case COUNTDOWN_STATE.PAUSED:
+                stopCountdown();
+                break;
+            case COUNTDOWN_STATE.RESET:
+                resetCountdown();
+                break;
+            default:
+                console.log('state wasnt changed');
         }
-        
     });
     /**
      * watching for timer interval and rest length and resetting coundown on change.
      */
     const intervalUnSubscribe = interval.subscribe(value =>{
         console.log('interval', value);
-        if( countDownState !== COUNTDOWN_STATE.REST && $countDown.minutes !== value){
+        if( $countDown.interval !== value){
+            $countDown.interval = value;
             resetCountdown();
         }
     })
     const restUnSubscribe = rest.subscribe(value =>{
         console.log('rest', value);
-        if( countDownState === COUNTDOWN_STATE.REST && $countDown.minutes !== value){
+        if( $countDown.rest !== value){
+            $countDown.rest = value;
             resetCountdown();
         }
     })
@@ -110,6 +108,7 @@ import { onDestroy } from 'svelte';
     */
     onDestroy(()=>{
         timerUnSubscribe();
+        stopCountdown();
         intervalUnSubscribe();
         restUnSubscribe();
     });
@@ -132,6 +131,9 @@ import { onDestroy } from 'svelte';
         &.active{
             background-color: $accentColor;
         }
+        &.ready{
+            background-color: lighten($accentColor, 10%);
+        }
         &.paused {
             background-color: $averageColor;
             color: #333;
@@ -146,7 +148,7 @@ import { onDestroy } from 'svelte';
     
 </style>
 
-<div class="pomodoro" class:active class:paused >
+<div class="pomodoro" class:active class:paused class:ready>
     <div class="clock">
         <span >{ $countDown.minutes}</span>:<span>{ $countDown.seconds}</span>
     </div>

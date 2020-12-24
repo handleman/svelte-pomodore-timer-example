@@ -14,7 +14,9 @@ const timerDefault = {
 const countDownDefault = {
     state: COUNTDOWN_STATE.RESET,
     minutes: INTERVAL,
-    seconds: 0
+    seconds: 0,
+    interval:INTERVAL,
+    rest:REST
 }
 
 export const timer = writable(timerDefault);
