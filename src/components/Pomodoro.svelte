@@ -5,12 +5,14 @@ import { onDestroy } from 'svelte';
     import {COUNTDOWN_STATE} from '../enums/countDownState';
     
     const DELAY = 60;
+    const TICK = 200;
 
     let tickInterval = null;
 
     $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE 
     $: ready = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
-    $: paused= interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED
+    $: paused = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED;
+    $: resting = $countDown.state === COUNTDOWN_STATE.REST;
 
     const interpolateTimerToCountdownState = (timer) =>{
         if (timer.active && !timer.paused){
@@ -27,18 +29,20 @@ import { onDestroy } from 'svelte';
     const startCountdown = ()=>{
         console.log('start timer');
         const tickCallback = () =>{
-            if($countDown.seconds === 0){
+            const isSecoundsOut = ($countDown.seconds === 0);
+            const isIntervalOut = ($countDown.minutes === 0 && $countDown.seconds === 1)
+            if(isSecoundsOut){
                 $countDown.seconds = DELAY-1;
                 $countDown.minutes = $countDown.minutes-1;
                 return;
             }
-            if($countDown.minutes === 0 && $countDown.seconds === 1){
-                resetCountdown();
+            if(isIntervalOut){
+                toggleCountdown();
                 return;
             }
             $countDown.seconds = $countDown.seconds-1;
         }
-        tickInterval = setInterval(tickCallback,1000)
+        tickInterval = setInterval(tickCallback, TICK)
     };
     const stopCountdown = ()=>{
         console.log('stop timer');
@@ -47,7 +51,38 @@ import { onDestroy } from 'svelte';
         clearInterval(tickInterval);
 
     };
-     const resetCountdown = ()=>{
+    const toggleCountdown = ()=>{
+        console.log('toggleCountdown');
+        console.log('toggleCountdown');
+        if($countDown.state === COUNTDOWN_STATE.ACTIVE){
+            countDown.update((oldState)=>{
+
+                return {
+                    ...oldState,
+                    state:COUNTDOWN_STATE.REST,
+                    minutes: $rest,
+                    seconds:0
+                }
+
+            })
+            alert('You need to get some rest')
+
+        }else{
+            countDown.update((oldState)=>{
+
+                return {
+                    ...oldState,
+                    state:COUNTDOWN_STATE.ACTIVE,
+                    minutes: $interval,
+                    seconds:0
+                }
+
+            })
+            alert("You should back to the work")
+        }
+
+    };
+    const resetCountdown = ()=>{
         console.log('reset countdown');
         countDown.update(oldState=>{
             const state = oldState;
@@ -56,27 +91,43 @@ import { onDestroy } from 'svelte';
             state.state = COUNTDOWN_STATE.RESET;
             return state;
         });
+        
         if(tickInterval){
             clearInterval(tickInterval);
         }
     };
+    const resetTimer = () =>{
+        timer.set({
+            active:false,
+            paused:false
+        });
+    }
 
     /**
      * watching for timer state and laucnhing appropriate actions
      */
     const timerUnSubscribe = timer.subscribe(value=>{
-        console.log(`derived state : ${ interpolateTimerToCountdownState(value) }`);
+        const derivedState = interpolateTimerToCountdownState(value);
+        const isResting = $countDown.state === COUNTDOWN_STATE.REST;
+        const shouldSkip = (derivedState !== COUNTDOWN_STATE.ACTIVE && derivedState === $countDown.state) 
+        console.log(`derived state : ${ derivedState}`);
         console.log(`current state : ${ $countDown.state }`);
+
+        if(shouldSkip){
+            return;
+        }
         
-        $countDown.state = interpolateTimerToCountdownState(value);
-        switch($countDown.state){
+        switch(derivedState){
             case COUNTDOWN_STATE.ACTIVE:
+                $countDown.state = isResting ? COUNTDOWN_STATE.REST: derivedState;
                 startCountdown();
                 break;
             case COUNTDOWN_STATE.PAUSED:
+                $countDown.state = derivedState;
                 stopCountdown();
                 break;
             case COUNTDOWN_STATE.RESET:
+                $countDown.state = derivedState;
                 resetCountdown();
                 break;
             default:
@@ -91,6 +142,7 @@ import { onDestroy } from 'svelte';
         if( $countDown.interval !== value){
             $countDown.interval = value;
             resetCountdown();
+            resetTimer();
         }
     })
     const restUnSubscribe = rest.subscribe(value =>{
@@ -98,6 +150,7 @@ import { onDestroy } from 'svelte';
         if( $countDown.rest !== value){
             $countDown.rest = value;
             resetCountdown();
+            resetTimer();
         }
     })
 
@@ -138,6 +191,9 @@ import { onDestroy } from 'svelte';
             background-color: $averageColor;
             color: #333;
         }
+        &.resting{
+            background-color: $primaryColor;
+        }
         .clock{
             text-align: center;
             font-size: 40pt;
@@ -148,7 +204,7 @@ import { onDestroy } from 'svelte';
     
 </style>
 
-<div class="pomodoro" class:active class:paused class:ready>
+<div class="pomodoro" class:active class:paused class:ready class:resting>
     <div class="clock">
         <span >{ $countDown.minutes}</span>:<span>{ $countDown.seconds}</span>
     </div>

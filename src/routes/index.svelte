@@ -9,28 +9,25 @@
 	$: isTimerOnPause= $timer.active && $timer.paused
 
 	const handleStartTimer = event => {
-		timer.update((value)=>{
-			value.active = true;
-			value.paused = false;
-			return value 
-		})
+		timer.set({
+            active:true,
+            paused:false
+        });
 		
 	}
 
 	const handlePauseHandler = event => {
-		timer.update((value)=>{
-			value.paused = true;
-			value.active = true;
-			return value;
-		})
+		timer.set({
+            active:true,
+            paused:true
+        });
 
 	}
 	const handleResetHandler = event => {
-		timer.update((value)=>{
-			value.paused = false;
-			value.active = false;
-			return value;
-		})
+		timer.set({
+            active:false,
+            paused:false
+        });
 	}
 
 </script>
