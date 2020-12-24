@@ -12,7 +12,7 @@ import { onDestroy } from 'svelte';
     $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE 
     $: ready = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
     $: paused = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED;
-    $: resting = $countDown.restMode;
+    $: resting = $countDown.restMode && !(interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED);
 
     const interpolateTimerToCountdownState = (timer) =>{
         if (timer.active && !timer.paused){
@@ -85,11 +85,13 @@ import { onDestroy } from 'svelte';
     const resetCountdown = ()=>{
         console.log('reset countdown');
         countDown.update(oldState=>{
-            const state = oldState;
-            state.minutes = $interval;
-            state.seconds = 0;
-            state.state = COUNTDOWN_STATE.RESET;
-            return state;
+            return {
+                ...oldState,
+                minutes: $interval,
+                seconds: 0,
+                state: COUNTDOWN_STATE.RESET,
+                restMode:false
+            };
         });
         
         if(tickInterval){
