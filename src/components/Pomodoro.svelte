@@ -5,10 +5,11 @@ import { onDestroy } from 'svelte';
     import {COUNTDOWN_STATE} from '../enums/countDownState';
     
     const DELAY = 60;
-    const TICK = 200;
+    const TICK = 1000;
 
     let tickInterval = null;
 
+    // computed props
     $: active = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.ACTIVE 
     $: ready = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.RESET;
     $: paused = interpolateTimerToCountdownState($timer) === COUNTDOWN_STATE.PAUSED;
