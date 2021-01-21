@@ -16,14 +16,14 @@
 		
 	}
 
-	const handlePauseHandler = event => {
+	const handlePauseTimer = event => {
 		timer.set({
             active:true,
             paused:true
         });
 
 	}
-	const handleResetHandler = event => {
+	const handleResetTimer = event => {
 		timer.set({
             active:false,
             paused:false
@@ -52,11 +52,11 @@
 		{/if}
 
 		{#if isTimerInUse}
-			<Button on:click={handlePauseHandler}>Pause</Button>
+			<Button on:click={handlePauseTimer}>Pause</Button>
 		{/if}
 
 		{#if isTimerOnPause}
-			<Button on:click={handleResetHandler} accent>Reset</Button>
+			<Button on:click={handleResetTimer} accent>Reset</Button>
 		{/if}
 
 	</TimerControlsPanel>
