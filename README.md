@@ -4,3 +4,7 @@ The goal of all of it is to try Svelte "in real world" using it in a way as we d
 
 ### reference
 https://svelte.dev/
+
+#### Angular version to comapre 
+
+https://github.com/handleman/angular-pomodoro-timer-example
