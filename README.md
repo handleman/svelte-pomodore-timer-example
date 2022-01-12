@@ -8,3 +8,7 @@ https://svelte.dev/
 #### Angular version to comapre 
 
 https://github.com/handleman/angular-pomodoro-timer-example
+
+#### React version to compare
+
+https://github.com/handleman/react-pomodoro-timer-example
